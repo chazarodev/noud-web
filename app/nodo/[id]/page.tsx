@@ -48,10 +48,15 @@ export default async function NodePage({ params }: Props) {
           </p>
           <h1 className={styles.title}>{node.title}</h1>
           {node.summary && <p className={styles.summary}>{node.summary}</p>}
-          {(node.links?.demo || node.links?.repo) && (
+          {(node.links?.site || node.links?.demo || node.links?.repo) && (
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              {node.links?.site && (
+                <a className="btn btn-sand" href={node.links.site} target="_blank" rel="noreferrer">
+                  Visitar sitio
+                </a>
+              )}
               {node.links?.demo && (
-                <a className="btn btn-sand" href={node.links.demo} target="_blank" rel="noreferrer">
+                <a className="btn btn-ghost" href={node.links.demo} target="_blank" rel="noreferrer">
                   Ver demo
                 </a>
               )}

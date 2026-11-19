@@ -1,13 +1,13 @@
 ---
 type: proyecto
 title: noudxml
-summary: "[Qué hace noudxml, en una línea]"
-date: 2025-01-01
-tags: [Next.js, React, Node.js]
+summary: "Tus XML del SAT, convertidos en papeles de trabajo."
+date: 2025-05-01
+tags: [Next.js, React, Node.js, Python, PostgreSQL]
 featured: true
 connections: [habilidades, construyendo-este-sitio, ahora]
 links:
-  repo: https://github.com/tu-usuario/noudxml
+  site: https://noudxml.com
 tile:
   cols: 3
   rows: 4
@@ -18,16 +18,44 @@ tile:
 
 ## El problema
 
-[Qué te llevó a construir noudxml.]
+Llevo 9 años trabajando en cuentas por pagar en México, donde cada factura
+existe como un archivo XML (CFDI) emitido ante el SAT. Procesando la
+facturación de cientos de proveedores noté que muchas empresas no tienen
+control sobre su facturación, aunque toda la información que necesitan ya
+está en esos XML.
+
+Quise resolverlo con una plataforma que lea esos archivos y devuelva la
+trazabilidad: qué está pendiente, qué ya se pagó y qué se cobró. El
+objetivo es reducir las refacturaciones mensuales por errores y recuperar
+el control.
 
 ## Cómo funciona
 
-[La idea central y las decisiones técnicas más interesantes.]
+El usuario solo arrastra y suelta sus XML; el sistema los organiza y
+clasifica automáticamente, sin pasos adicionales. Con eso obtiene:
+
+- Cuentas por pagar y por cobrar.
+- Conciliación de pagos PUE / PPD (pagos en una sola exhibición o en
+  parcialidades).
+- DIOT y pago provisional, listos para revisar y llevar a Excel.
+
+Está pensado para PYMEs, transportistas y contribuyentes del RESICO.
 
 <Nota>
-Puedes usar componentes dentro del MDX, como esta nota.
+No es un ERP contable: es un auxiliar.
 </Nota>
 
 ## Lo que aprendí
 
-[Dos o tres aprendizajes. Es lo que más leen los reclutadores.]
+Varios cursos de desarrollo full-stack me dieron los cimientos, pero este
+proyecto superó por mucho lo que había hecho en ellos: muchos más endpoints,
+una base de datos de casi 30 tablas y una arquitectura con backend,
+frontend, base de datos y un microservicio en Python.
+
+Aprendí que, entre más grande es un proyecto, un cambio pequeño en un
+endpoint o en la base de datos puede afectar otras partes del sistema. Eso
+me obligó a tener siempre presente la estructura general del proyecto.
+
+También aprendí a abstraer la lógica de negocio. Las cuentas por pagar y
+por cobrar son un espejo una de la otra, así que en lugar de mantener dos
+lógicas separadas, las unifiqué en una sola.

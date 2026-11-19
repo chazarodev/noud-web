@@ -53,7 +53,11 @@ const FrontmatterSchema = z.object({
   draft: z.boolean().default(false),
   inMosaic: z.boolean().default(true),
   links: z
-    .object({ repo: z.string().url().optional(), demo: z.string().url().optional() })
+    .object({
+      site: z.string().url().optional(),
+      repo: z.string().url().optional(),
+      demo: z.string().url().optional(),
+     })
     .optional(),
   tile: TileSchema.optional(),
 });
@@ -142,3 +146,4 @@ export const TYPE_LABEL: Record<NodeType, string> = {
   habilidades: "Habilidades",
   ahora: "Ahora mismo",
 };
+
