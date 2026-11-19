@@ -4,7 +4,7 @@ export const site = {
   role: "Desarrollador full-stack",
   headline: "Construyo herramientas que conectan ideas.",
   intro: "Trabajo con Python, Node.js, React y Next.js. Creador de noudxml.",
-  url: "https://tu-dominio.com",
+  url: "https://noud-web.vercel.app/",
   email: "alberto@noudxml.com",
   cv: "/cv.pdf", // coloca tu CV en public/cv.pdf
   social: {
