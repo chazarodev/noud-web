@@ -1,0 +1,58 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 400 / 320;
+  align-self: center;
+  z-index: 3;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.node {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--tile-cream);
+  color: var(--tile-indigo);
+  box-shadow: 0 0 0 3px var(--tile-indigo);
+  transition: background 0.2s ease;
+}
+
+.node:hover {
+  background: var(--node-mint);
+}

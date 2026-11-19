@@ -1,0 +1,157 @@
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 104px;
+  grid-auto-flow: dense;
+  gap: 12px;
+}
+
+/* ---------- Tile ---------- */
+.tile {
+  --fg: var(--tile-indigo);
+  --circle: var(--tile-cream);
+  grid-column: span var(--cols);
+  grid-row: span var(--rows);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  color: var(--fg);
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.tile[data-color="indigo"] { background: var(--tile-indigo); --fg: var(--tile-cream); --circle: var(--tile-mint); }
+.tile[data-color="green"] { background: var(--tile-green); --fg: var(--tile-cream); }
+.tile[data-color="violet"] { background: var(--tile-violet); --fg: var(--tile-cream); }
+.tile[data-color="lavender"] { background: var(--tile-lavender); }
+.tile[data-color="cream"] { background: var(--tile-cream); }
+.tile[data-color="sand"] { background: var(--tile-sand); }
+.tile[data-color="terracotta"] { background: var(--tile-terracotta); }
+.tile[data-color="sky"] { background: var(--tile-sky); }
+.tile[data-color="mint"] { background: var(--tile-mint); }
+
+.body {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* ---------- Estados de hover (grafo) ---------- */
+.tile[data-state="on"] { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); }
+.tile[data-state="near"] { box-shadow: inset 0 0 0 3px var(--node-mint); }
+.tile[data-state="dim"] { opacity: 0.35; filter: saturate(0.5); }
+.tile:focus-within { outline: 3px solid var(--tile-lavender); outline-offset: 3px; }
+
+.port {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--node-mint);
+  box-shadow: 0 0 0 3px rgba(15, 16, 34, 0.35);
+  z-index: 4;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.tile[data-state="on"] .port { background: var(--tile-lavender); transform: scale(1.5); }
+.tile[data-state="near"] .port { transform: scale(1.25); }
+
+/* ---------- Formas (eco del arco y los nodos de noud) ---------- */
+.tile[data-shape="arch"] .body {
+  margin: 20px 20px 0;
+  height: calc(100% - 20px);
+  padding: 128px 40px 32px;
+  justify-content: flex-end;
+  border-radius: 999px 999px 0 0;
+  background: var(--tile-cream);
+  color: var(--tile-indigo);
+}
+
+.tile[data-shape="circle"] {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.tile[data-shape="circle"] .body {
+  width: 100%;
+  max-width: 290px;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 24px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--circle);
+  color: var(--tile-indigo);
+}
+
+.tile[data-shape="quarter"]::before,
+.tile[data-shape="dot"]::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+}
+.tile[data-shape="quarter"]::before {
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 150px 0 0 0;
+  background: var(--tile-sky);
+}
+.tile[data-shape="dot"]::before {
+  right: -50px;
+  bottom: -50px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--tile-terracotta);
+}
+
+/* ---------- Líneas ---------- */
+.links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 10;
+}
+
+.draw {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: draw 0.6s ease forwards;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+  .tile {
+    grid-column: span 6;
+    grid-row: auto;
+    min-height: 240px;
+  }
+  .tile[data-half] { grid-column: span 3; }
+  .links { display: none; }
+}
+
+@media (max-width: 640px) {
+  .tile[data-half] { grid-column: span 6; }
+  .body { padding: 28px; }
+}

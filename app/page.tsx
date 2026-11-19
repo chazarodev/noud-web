@@ -1,69 +1,107 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Mosaic, type MosaicItem } from "@/components/mosaic/Mosaic";
+import { ContactTile, HeroTile, HintTile, NodeTile, ProjectsHeaderTile } from "@/components/mosaic/tiles";
+import { getAllNodes, type NoudNode } from "@/lib/nodes";
 
-export default function Home() {
+const ANCHOR: Partial<Record<NoudNode["type"], string>> = {
+  "sobre-mi": "sobre-mi",
+  escrito: "escritos",
+};
+
+type Ordered = MosaicItem & { order: number };
+
+export default async function Home() {
+  const nodes = (await getAllNodes()).filter((n) => n.inMosaic);
+
+  // Solo el escrito más reciente aparece en el mosaico.
+  const latestPost = nodes
+    .filter((n) => n.type === "escrito")
+    .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0))[0];
+
+  const shown = nodes.filter((n) => n.type !== "escrito" || n === latestPost);
+  const projectIds = shown.filter((n) => n.type === "proyecto").map((n) => n.id);
+  const aboutId = shown.find((n) => n.type === "sobre-mi")?.id;
+  const featuredId = shown.find((n) => n.featured)?.id;
+
+  const usedAnchors = new Set<string>();
+  const nodeItems: Ordered[] = shown.map((n) => {
+    let anchor = ANCHOR[n.type];
+    if (anchor && usedAnchors.has(anchor)) anchor = undefined;
+    if (anchor) usedAnchors.add(anchor);
+    return {
+      id: n.id,
+      cols: n.tile.cols,
+      rows: n.tile.rows,
+      color: n.tile.color,
+      shape: n.tile.shape,
+      connections: n.connections,
+      anchor,
+      label: n.title,
+      half: n.tile.cols <= 5 && n.type !== "sobre-mi",
+      content: <NodeTile node={n} />,
+      order: n.tile.order,
+    };
+  });
+
+  // Tiles fijos: su lugar en el mosaico se define con "order".
+  const fixed: Ordered[] = [
+    {
+      id: "inicio",
+      order: 0,
+      cols: 6,
+      rows: 4,
+      color: "indigo",
+      shape: "none",
+      label: "Presentación",
+      connections: [aboutId, featuredId, "contacto"].filter(Boolean) as string[],
+      content: <HeroTile />,
+    },
+    {
+      id: "ayuda",
+      order: 65,
+      cols: 3,
+      rows: 1,
+      color: "sky",
+      shape: "none",
+      isNode: false,
+      half: true,
+      connections: [],
+      content: <HintTile />,
+    },
+    {
+      id: "proyectos",
+      order: 70,
+      cols: 3,
+      rows: 3,
+      color: "terracotta",
+      shape: "dot",
+      anchor: "proyectos",
+      label: "Proyectos",
+      half: true,
+      connections: projectIds,
+      content: <ProjectsHeaderTile />,
+    },
+    {
+      id: "contacto",
+      order: 1000,
+      cols: 3,
+      rows: 3,
+      color: "indigo",
+      shape: "circle",
+      anchor: "contacto",
+      label: "Contacto",
+      half: true,
+      connections: [],
+      content: <ContactTile />,
+    },
+  ];
+
+  const items = [...fixed, ...nodeItems]
+    .sort((a, b) => a.order - b.order)
+    .map(({ order: _order, ...item }) => item);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main>
+      <Mosaic items={items} />
+    </main>
   );
 }

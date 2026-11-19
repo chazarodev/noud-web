@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# noud-web
 
-## Getting Started
+Página personal con la identidad de **noud**: un mosaico donde cada pieza es un nodo y al pasar el cursor se dibujan arcos (como el del logo) hacia las piezas relacionadas.
 
-First, run the development server:
+## Empezar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requiere Node.js 20.9 o superior.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Cómo está organizado
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  layout.tsx            fuentes (Inter + Fraunces), tema, header y footer
+  page.tsx              el mosaico: une los tiles fijos con los nodos MDX
+  nodo/[id]/page.tsx    página de cada nodo (/nodo/noudxml, etc.)
+  globals.css           tokens de noud + paleta del mosaico
+  icon.svg, favicon.ico, apple-icon.png   íconos de noud
+components/
+  mosaic/Mosaic.tsx     grid interactivo (hover → conexiones en SVG)
+  mosaic/tiles.tsx      cómo se ve cada tipo de nodo dentro de su tile
+  MiniGraph.tsx         grafo de conexiones en la página de un nodo
+  mdx.tsx               componentes disponibles dentro del MDX (<Nota>, <Figura>)
+content/nodes/*.mdx     TODO tu contenido
+lib/nodes.ts            lee y valida los .mdx (gray-matter + zod)
+lib/site.ts             tu nombre, correo, redes, CV
+```
 
-## Learn More
+## Escribir un nodo nuevo
 
-To learn more about Next.js, take a look at the following resources:
+Crea `content/nodes/mi-nodo.mdx`. El nombre del archivo es su URL (`/nodo/mi-nodo`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```mdx
+---
+type: escrito            # proyecto | escrito | pensamiento | sobre-mi | habilidades | ahora
+title: Mi primer escrito
+summary: Una línea que lo resume
+date: 2026-11-20
+tags: [Next.js]
+connections: [noudxml]   # ids de otros nodos; la conexión se vuelve de ida y vuelta sola
+draft: false             # true = solo visible con npm run dev
+inMosaic: true           # false = tiene página, pero no aparece en el mosaico
+tile:
+  cols: 5                # ancho en columnas (de 12)
+  rows: 2                # alto en filas (104px cada una)
+  color: cream           # indigo | green | violet | lavender | cream | sand | terracotta | sky | mint
+  shape: quarter         # none | arch | circle | quarter | dot | mark
+  order: 40              # posición en el mosaico (menor = antes)
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+El contenido en Markdown. Puedes usar <Nota>componentes</Nota>.
+```
 
-## Deploy on Vercel
+En el mosaico solo aparece el **escrito más reciente**; los demás tienen su propia página.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Los tiles fijos (presentación, proyectos, ayuda y contacto) están en `app/page.tsx`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Pendientes
+
+- Cambiar los textos entre `[corchetes]` en `lib/site.ts` y `content/nodes/`.
+- Poner tu CV en `public/cv.pdf`.
+- Página `/escritos` con la lista de todas las publicaciones.
+- Imágenes OG automáticas por nodo (`opengraph-image.tsx`).
+- Deploy en Vercel.
